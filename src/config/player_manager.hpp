@@ -130,11 +130,11 @@ public:
     /** Returns a player with a given unique id. */
     const PlayerProfile *getPlayer(unsigned int n) const
     {
-        return &m_all_players[n];
+        return m_all_players[n];
     }   // getPlayer
     // ------------------------------------------------------------------------
     /** Returns a player with a given unique id. */
-    PlayerProfile *getPlayer(unsigned int n)  { return &m_all_players[n];}
+    PlayerProfile *getPlayer(unsigned int n)  { return m_all_players[n];}
     // ------------------------------------------------------------------------
     /** A handy shortcut funtion. */
     static AchievementsStatus* getCurrentAchievementsStatus()

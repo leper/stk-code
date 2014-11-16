@@ -47,7 +47,7 @@ public:
 
     unsigned getDepthStencilTexture() const { return DepthStencilTexture; }
     unsigned getRenderTarget(enum TypeRTT target) const { return RenderTargetTextures[target]; }
-    FrameBuffer& getFBO(enum TypeFBO fbo) { return FrameBuffers[fbo]; }
+    FrameBuffer& getFBO(enum TypeFBO fbo) { return *FrameBuffers[fbo]; }
 
     FrameBuffer* render(irr::scene::ICameraSceneNode* camera, float dt);
 

@@ -132,7 +132,7 @@ namespace GUIEngine
         {
             const int selection = m_selection[playerID];
             if (selection < 0 || selection >= int(m_children.size())) return "";
-            return m_children[selection].m_text;
+            return m_children[selection]->m_text;
         }
         // --------------------------------------------------------------------
 
