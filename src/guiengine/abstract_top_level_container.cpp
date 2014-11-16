@@ -58,33 +58,33 @@ void AbstractTopLevelContainer::addWidgetsRecursively(
     // ------- add widgets
     for (int n=0; n<widgets_amount; n++)
     {
-        if (widgets[n].getType() == WTYPE_DIV)
+        if (widgets[n]->getType() == WTYPE_DIV)
         {
-            widgets[n].add(); // Will do nothing, but will maybe reserve an ID
-            addWidgetsRecursively(widgets[n].m_children, &widgets[n]);
+            widgets[n]->add(); // Will do nothing, but will maybe reserve an ID
+            addWidgetsRecursively(widgets[n]->m_children, widgets[n]);
         }
         else
         {
             // warn if widget has no dimensions (except for ribbons and icons,
             // where it is normal since it adjusts to its contents)
-            if ((widgets[n].m_w < 1 || widgets[n].m_h < 1) &&
-                widgets[n].getType() != WTYPE_RIBBON &&
-                widgets[n].getType() != WTYPE_ICON_BUTTON &&
-                widgets[n].getType() != WTYPE_SPACER)
+            if ((widgets[n]->m_w < 1 || widgets[n]->m_h < 1) &&
+                widgets[n]->getType() != WTYPE_RIBBON &&
+                widgets[n]->getType() != WTYPE_ICON_BUTTON &&
+                widgets[n]->getType() != WTYPE_SPACER)
             {
                 Log::warn("AbstractTopLevelContainer::addWidgetsRecursively",
                     "Widget %s of type %d has no dimensions",
-                    widgets[n].m_properties[PROP_ID].c_str(), widgets[n].getType());
+                    widgets[n]->m_properties[PROP_ID].c_str(), widgets[n]->getType());
             }
 
-            if (widgets[n].m_x == -1 || widgets[n].m_y == -1)
+            if (widgets[n]->m_x == -1 || widgets[n]->m_y == -1)
             {
                 Log::warn("AbstractTopLevelContainer::addWidgetsRecursively",
                     "Widget %s of type %d has no position",
-                    widgets[n].m_properties[PROP_ID].c_str(), widgets[n].getType());
+                    widgets[n]->m_properties[PROP_ID].c_str(), widgets[n]->getType());
             }
 
-            widgets[n].add();
+            widgets[n]->add();
         }
 
     } // for n in all widgets
@@ -161,7 +161,7 @@ Widget* AbstractTopLevelContainer::getWidget(const char* name,
 
     for(int n=0; n<widgets_amount; n++)
     {
-        Widget& widget = (*within_vector)[n];
+        Widget& widget = *(within_vector[n]);
 
         if (widget.m_properties[PROP_ID] == name) return &widget;
 
@@ -188,7 +188,7 @@ Widget* AbstractTopLevelContainer::getWidget(const int id,
 
     for (int n=0; n<widgets_amount; n++)
     {
-        Widget& widget = (*within_vector)[n];
+        Widget& widget = *(within_vector[n]);
 
         if (widget.m_element != NULL &&
             widget.getIrrlichtElement()->getID() == id) return &widget;
@@ -299,7 +299,7 @@ void AbstractTopLevelContainer::elementsWereDeleted(PtrVector<Widget>* within_ve
 
     for (int n=0; n<widgets_amount; n++)
     {
-        Widget& widget = (*within_vector)[n];
+        Widget& widget = *(within_vector[n]);
 
         widget.elementRemoved();
 

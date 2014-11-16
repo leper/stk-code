@@ -241,9 +241,9 @@ void PlayerManager::initRemainingData()
         // so just initialise the story and achievement data
         // structures
         if (!m_player_data)
-            m_all_players[i].initRemainingData();
+            m_all_players[i]->initRemainingData();
         else   // not a first time start, load remaining data
-            m_all_players[i].loadRemainingData(player_nodes[i]);
+            m_all_players[i]->loadRemainingData(player_nodes[i]);
     }
 
     delete m_player_data;

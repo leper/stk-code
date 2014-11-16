@@ -720,7 +720,7 @@ bool UserConfig::loadConfig()
     const int paramAmount = all_params.size();
     for(int i=0; i<paramAmount; i++)
     {
-        all_params[i].findYourDataInAChildOf(root);
+        all_params[i]->findYourDataInAChildOf(root);
     }
 
 
@@ -757,7 +757,7 @@ void UserConfig::saveConfig()
         for(int i=0; i<paramAmount; i++)
         {
             //Log::info("UserConfig", "Saving parameter %d to file", i);
-            all_params[i].write(configfile);
+            all_params[i]->write(configfile);
         }
 
         configfile << "</stkconfig>\n";

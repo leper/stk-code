@@ -152,7 +152,7 @@ public:
     {
         for (unsigned int n=0; n<UserConfigParams::m_saved_grand_prix_list.size(); n++)
         {
-            SavedGrandPrix* gp = &UserConfigParams::m_saved_grand_prix_list[n];
+            SavedGrandPrix* gp = UserConfigParams::m_saved_grand_prix_list[n];
             if (gp->getGPID()        == gpid   &&
                 gp->getPlayerID()    == player &&
                 gp->getPlayerKarts() == (int)number_of_players)

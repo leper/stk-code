@@ -512,39 +512,39 @@ void LayoutManager::doCalculateLayout(PtrVector<Widget>& widgets, AbstractTopLev
                     }
                     else if (align == "center")
                     {
-                        widgets[n].m_y = y + h/2 - widgets[n].m_h/2;
+                        widgets[n]->m_y = y + h / 2 - widgets[n]->m_h / 2;
                     }
                     else if (align == "bottom")
                     {
-                        widgets[n].m_y = y + h - widgets[n].m_h;
+                        widgets[n]->m_y = y + h - widgets[n]->m_h;
                     }
                     else
                     {
                         Log::warn("LayoutManager::doCalculateLayout",
                             "Alignment '%s' is unknown (widget '%s', in a horiozntal-row layout)",
-                            align.c_str(), widgets[n].m_properties[PROP_ID].c_str());
+                            align.c_str(), widgets[n]->m_properties[PROP_ID].c_str());
                     }
 
-                    widgets[n].m_w = (int)(left_space*fraction);
-                    if (widgets[n].m_properties[PROP_MAX_WIDTH].size() > 0)
+                    widgets[n]->m_w = (int)(left_space*fraction);
+                    if (widgets[n]->m_properties[PROP_MAX_WIDTH].size() > 0)
                     {
-                        const int max_width = atoi_p( widgets[n].m_properties[PROP_MAX_WIDTH].c_str() );
-                        if (widgets[n].m_w > max_width) widgets[n].m_w = max_width;
+                        const int max_width = atoi_p(widgets[n]->m_properties[PROP_MAX_WIDTH].c_str());
+                        if (widgets[n]->m_w > max_width) widgets[n]->m_w = max_width;
                     }
 
-                    if (widgets[n].m_w <= 0)
+                    if (widgets[n]->m_w <= 0)
                     {
                         Log::warn("LayoutManager", "Widget '%s' has a width of %i (left_space = %i, "
-                                  "fraction = %f, max_width = %s)", widgets[n].m_properties[PROP_ID].c_str(),
-                                  widgets[n].m_w, left_space, fraction, widgets[n].m_properties[PROP_MAX_WIDTH].c_str());
-                        widgets[n].m_w = 1;
+                            "fraction = %f, max_width = %s)", widgets[n]->m_properties[PROP_ID].c_str(),
+                                  widgets[n]->m_w, left_space, fraction, widgets[n]->m_properties[PROP_MAX_WIDTH].c_str());
+                        widgets[n]->m_w = 1;
                     }
 
-                    x += widgets[n].m_w;
+                    x += widgets[n]->m_w;
                 }
                 else
                 {
-                    widgets[n].m_h = (int)(left_space*fraction);
+                    widgets[n]->m_h = (int)(left_space*fraction);
 
                     if (widgets[n].m_properties[PROP_MAX_HEIGHT].size() > 0)
                     {
