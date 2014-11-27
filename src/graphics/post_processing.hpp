@@ -94,6 +94,7 @@ public:
 
     /** Render tex. Used for blit/texture resize */
     void renderPassThrough(unsigned tex);
+    void applySSAO(unsigned tex);
     void renderTextureLayer(unsigned tex, unsigned layer);
     void applyMLAA();
 

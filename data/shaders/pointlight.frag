@@ -1,16 +1,17 @@
 uniform sampler2D ntex;
 uniform sampler2D dtex;
+uniform sampler2D ctex;
 
 flat in vec3 center;
 flat in float energy;
 flat in vec3 col;
 flat in float radius;
 
-out vec4 Diffuse;
-out vec4 Specular;
+out vec4 FragColor;
 
 vec3 DecodeNormal(vec2 n);
 vec3 SpecularBRDF(vec3 normal, vec3 eyedir, vec3 lightdir, vec3 color, float roughness);
+vec3 DiffuseBRDF(vec3 color);
 vec4 getPosFromUVDepth(vec3 uvDepth, mat4 InverseProjectionMatrix);
 
 void main()
@@ -36,7 +37,8 @@ void main()
     vec3 L = -normalize(xpos.xyz - light_pos);
 
     float NdotL = clamp(dot(norm, L), 0., 1.);
+    vec3 color = texture(ctex, texc).rgb;
+    float reflectance = texture(ntex, texc).a;
 
-    Diffuse = vec4(NdotL * light_col * att, 1.);
-    Specular = vec4(SpecularBRDF(norm, eyedir, L, light_col, roughness) * NdotL * att, 1.);
+    FragColor = vec4(NdotL * light_col * att * mix(DiffuseBRDF(color), SpecularBRDF(norm, eyedir, L, color, roughness), reflectance), 1.);
 }

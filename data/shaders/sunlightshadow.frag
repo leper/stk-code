@@ -1,5 +1,6 @@
 uniform sampler2D ntex;
 uniform sampler2D dtex;
+uniform sampler2D ctex;
 uniform sampler2DArray shadowtex;
 
 uniform float split0;
@@ -12,11 +13,11 @@ uniform vec3 col;
 uniform float sunangle = .54;
 
 in vec2 uv;
-out vec4 Diff;
-out vec4 Spec;
+out vec4 FragColor;
 
 vec3 DecodeNormal(vec2 n);
 vec3 SpecularBRDF(vec3 normal, vec3 eyedir, vec3 lightdir, vec3 color, float roughness);
+vec3 DiffuseBRDF(vec3 color);
 vec4 getPosFromUVDepth(vec3 uvDepth, mat4 InverseProjectionMatrix);
 
 vec3 getMostRepresentativePoint(vec3 direction, vec3 R, float angularRadius)
@@ -29,7 +30,7 @@ vec3 getMostRepresentativePoint(vec3 direction, vec3 R, float angularRadius)
     return (DdotR < d) ? normalize(d * D + normalize (S) * r) : R;
 }
 
-float getShadowFactor(vec3 pos, float bias, int index)
+float getShadowFactor(vec3 pos, int index)
 {
 
 	vec2 shadowoffset[4] = vec2[](
@@ -50,62 +51,36 @@ float getShadowFactor(vec3 pos, float bias, int index)
 
 void main() {
     vec2 uv = gl_FragCoord.xy / screen;
-	float z = texture(dtex, uv).x;
-	vec4 xpos = getPosFromUVDepth(vec3(uv, z), InverseProjectionMatrix);
+    float z = texture(dtex, uv).x;
+    vec4 xpos = getPosFromUVDepth(vec3(uv, z), InverseProjectionMatrix);
 
-	vec3 norm = normalize(DecodeNormal(2. * texture(ntex, uv).xy - 1.));
+    vec3 norm = normalize(DecodeNormal(2. * texture(ntex, uv).xy - 1.));
     float roughness =texture(ntex, uv).z;
     vec3 eyedir = -normalize(xpos.xyz);
 
-	// Normalized on the cpu
+    // Normalized on the cpu
     vec3 L = direction;
 
     float NdotL = clamp(dot(norm, L), 0., 1.);
+    vec3 color = texture(ctex, uv).rgb;
 
     float angle = 3.14 * sunangle / 180.;
     vec3 R = reflect(-eyedir, norm);
     vec3 Lightdir = getMostRepresentativePoint(direction, R, angle);
 
-    vec3 Specular = SpecularBRDF(norm, eyedir, Lightdir, col, roughness) * NdotL;
+    float reflectance = texture(ntex, uv).a;
 
-
-	vec3 outcol = NdotL * col;
-
-
-	// Shadows
-	float bias = 0.005 * tan(acos(NdotL)); // According to the slope
-	bias = clamp(bias, 0., 0.01);
-	float factor;
-	if (xpos.z < split0)
-		factor = getShadowFactor(xpos.xyz, bias, 0);
-/*	else if (xpos.z < 6.)
-	{
-		float a = getShadowFactor(xpos.xyz, bias, 0), b = getShadowFactor(xpos.xyz, bias, 1);
-		factor = mix(a, b, (xpos.z - 5.));
-	}*/
-	else if (xpos.z < split1)
-		factor = getShadowFactor(xpos.xyz, bias, 1);
-/*	else if (xpos.z < 21.)
-	{
-		float a = getShadowFactor(xpos.xyz, bias, 1), b = getShadowFactor(xpos.xyz, bias, 2);
-		factor = mix(a, b, (xpos.z - 20.));
-	}*/
-	else if (xpos.z < split2)
-		factor = getShadowFactor(xpos.xyz, bias, 2);
-/*	else if (xpos.z < 55.)
-	{
-		float a = getShadowFactor(xpos.xyz, bias, 2), b = getShadowFactor(xpos.xyz, bias, 3);
-		factor = mix(a, b, (xpos.z - 50.) / 5.);
-	}*/
-	else if (xpos.z < splitmax)
-		factor = getShadowFactor(xpos.xyz, bias, 3);
-/*	else if (xpos.z < 150.)
-	{
-		factor = mix(getShadowFactor(xpos.xyz, bias, 3), 1., (xpos.z - 145.) / 5.);
-	}*/
-	else
-		factor = 1.;
-	Diff = vec4(factor * NdotL * col, 1.);
-	Spec = vec4(factor * Specular, 1.);
-	return;
+    // Shadows
+    float factor;
+    if (xpos.z < split0)
+        factor = getShadowFactor(xpos.xyz, 0);
+    else if (xpos.z < split1)
+        factor = getShadowFactor(xpos.xyz, 1);
+    else if (xpos.z < split2)
+        factor = getShadowFactor(xpos.xyz, 2);
+    else if (xpos.z < splitmax)
+        factor = getShadowFactor(xpos.xyz, 3);
+    else
+        factor = 1.;
+    FragColor = vec4(factor * NdotL * col * mix(DiffuseBRDF(color), SpecularBRDF(norm, eyedir, Lightdir, color, roughness), reflectance), .0);
 }

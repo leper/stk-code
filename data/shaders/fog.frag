@@ -19,5 +19,5 @@ void main()
     vec3 fog = col * factor;
 
     // fog is scattering component, factor is the beer lambert absorption
-    FragColor = vec4(fog, factor);
+    FragColor = vec4(fog / 3.14, factor);
 }

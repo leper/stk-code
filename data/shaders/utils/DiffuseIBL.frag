@@ -19,7 +19,7 @@ mat4 getMatrix(float L[9])
     );
 }
 
-vec3 DiffuseIBL(vec3 normal)
+vec3 DiffuseIBL(vec3 normal, vec3 color)
 {
     // Convert normal in world space (where SH coordinates were computed)
     vec4 extendednormal = TransposeViewMatrix * vec4(normal, 0.);
@@ -32,5 +32,5 @@ vec3 DiffuseIBL(vec3 normal)
     float g = dot(extendednormal, gmat * extendednormal);
     float b = dot(extendednormal, bmat * extendednormal);
 
-    return max(vec3(r, g, b), vec3(0.));
+    return max(vec3(r, g, b), vec3(0.)) * color / 3.14;
 }
