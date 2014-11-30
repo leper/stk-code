@@ -6,6 +6,7 @@ uniform float blueLmn[9];
 uniform float greenLmn[9];
 uniform float redLmn[9];
 uniform mat4 TransposeViewMatrix;
+uniform sampler2D dfg;
 
 mat4 getMatrix(float L[9])
 {
@@ -19,7 +20,7 @@ mat4 getMatrix(float L[9])
     );
 }
 
-vec3 DiffuseIBL(vec3 normal, vec3 color)
+vec3 DiffuseIBL(vec3 normal, vec3 V, float roughness, vec3 color)
 {
     // Convert normal in world space (where SH coordinates were computed)
     vec4 extendednormal = TransposeViewMatrix * vec4(normal, 0.);
@@ -32,5 +33,7 @@ vec3 DiffuseIBL(vec3 normal, vec3 color)
     float g = dot(extendednormal, gmat * extendednormal);
     float b = dot(extendednormal, bmat * extendednormal);
 
-    return max(vec3(r, g, b), vec3(0.)) * color / 3.14;
+    float NdotV = clamp(dot(V, normal), 0., 1.);
+
+    return max(vec3(r, g, b), vec3(0.)) * texture(dfg, vec2(NdotV, roughness)).b * color / 3.14;
 }

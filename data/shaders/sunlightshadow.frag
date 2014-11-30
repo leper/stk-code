@@ -17,7 +17,7 @@ out vec4 FragColor;
 
 vec3 DecodeNormal(vec2 n);
 vec3 SpecularBRDF(vec3 normal, vec3 eyedir, vec3 lightdir, vec3 color, float roughness);
-vec3 DiffuseBRDF(vec3 color);
+vec3 DiffuseBRDF(vec3 normal, vec3 eyedir, vec3 lightdir, vec3 color, float roughness);
 vec4 getPosFromUVDepth(vec3 uvDepth, mat4 InverseProjectionMatrix);
 
 vec3 getMostRepresentativePoint(vec3 direction, vec3 R, float angularRadius)
@@ -68,7 +68,7 @@ void main() {
     vec3 R = reflect(-eyedir, norm);
     vec3 Lightdir = getMostRepresentativePoint(direction, R, angle);
 
-    float reflectance = texture(ntex, uv).a;
+    float metalness = texture(ntex, uv).a;
 
     // Shadows
     float factor;
@@ -82,5 +82,8 @@ void main() {
         factor = getShadowFactor(xpos.xyz, 3);
     else
         factor = 1.;
-    FragColor = vec4(factor * NdotL * col * mix(DiffuseBRDF(color), SpecularBRDF(norm, eyedir, Lightdir, color, roughness), reflectance), .0);
+
+    vec3 Dielectric = DiffuseBRDF(norm, eyedir, Lightdir, color, roughness) + SpecularBRDF(norm, eyedir, Lightdir, vec3(.04), roughness);
+    vec3 Metal = SpecularBRDF(norm, eyedir, Lightdir, color, roughness);
+    FragColor = vec4(factor * NdotL * col * mix(Dielectric, Metal, metalness), 0.);
 }
