@@ -1563,7 +1563,7 @@ namespace FullScreenShader
             GL_FRAGMENT_SHADER, file_manager->getAsset("shaders/utils/SpecularIBL.frag").c_str(),
             GL_FRAGMENT_SHADER, file_manager->getAsset("shaders/IBL.frag").c_str());
         AssignUniforms("TransposeViewMatrix", "blueLmn[0]", "greenLmn[0]", "redLmn[0]");
-        AssignSamplerNames(Program, 0, "ntex", 1, "dtex", 2, "ctex", 3, "emittex", 4, "probe");
+        AssignSamplerNames(Program, 0, "ntex", 1, "dtex", 2, "ctex", 3, "emittex", 4, "probe", 5, "dfg");
     }
 
     ShadowedSunLightShader::ShadowedSunLightShader()
