@@ -15,7 +15,7 @@ void main()
     col.rgb = getRGBFromCIEXxy(vec3(1.5 * Yxy.x, Yxy.y, Yxy.z));
 
     // Uncharted2 tonemap with Auria's custom coefficients
-    vec4 perChannel = (col * (6.2 * col + .4)) / (col * (5.2 * col + 1.2) + 0.06);
+    vec4 perChannel = (col * (6.9 * col + .6)) / (col * (5.2 * col + 2.5) + 0.06);
     perChannel = pow(perChannel, vec4(2.2));
 
     vec2 inside = uv - 0.5;
